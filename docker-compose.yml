@@ -5,13 +5,10 @@ services:
     container_name: pm_db
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: grupoat
-      POSTGRES_DB: project_management_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
