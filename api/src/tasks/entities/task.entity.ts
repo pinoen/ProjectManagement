@@ -18,6 +18,6 @@ export class Task {
   @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.PENDIENTE })
   status!: TaskStatus
 
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, project => project.tasks)
   project!: Project
 }
