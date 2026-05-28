@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Client } from '../clients/entities/client.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -13,7 +14,12 @@ export class ProjectsService {
     private readonly projectRepository: Repository<Project>
   ) { }
   async create(createProjectDto: CreateProjectDto) {
-    const project = this.projectRepository.create({ ...createProjectDto, user: { id: createProjectDto.userId } })
+    const { userId, clientId, ...restOfCreate } = createProjectDto
+    const project = this.projectRepository.create({ ...restOfCreate, user: { id: userId } })
+
+    if (clientId) {
+      project.client = { id: clientId } as Client
+    }
 
     await this.projectRepository.save(project)
     return project;
