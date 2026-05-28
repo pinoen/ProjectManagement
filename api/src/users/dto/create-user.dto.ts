@@ -1,4 +1,5 @@
-import { IsString, MinLength } from "class-validator";
+import { IsEnum, IsOptional, IsString, MinLength } from "class-validator";
+import { UserStatus } from "../entities/user.entity";
 
 export class CreateUserDto {
   @IsString()
@@ -9,4 +10,7 @@ export class CreateUserDto {
   @MinLength(6)
   password!: string
 
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status?: UserStatus
 }

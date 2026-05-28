@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { ProjectStatus } from "../entities/project.entity";
 
 export class CreateProjectDto {
   @IsString()
@@ -10,4 +11,8 @@ export class CreateProjectDto {
   @IsNumber()
   @IsOptional()
   clientId?: number
+
+  @IsOptional()
+  @IsEnum(ProjectStatus)
+  status?: ProjectStatus
 }

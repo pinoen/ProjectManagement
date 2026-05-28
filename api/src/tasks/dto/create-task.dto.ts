@@ -1,4 +1,5 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { TaskStatus } from "../entities/task.entity";
 
 export class CreateTaskDto {
   @IsString()
@@ -6,4 +7,8 @@ export class CreateTaskDto {
 
   @IsNumber()
   projectId!: number
+
+  @IsOptional()
+  @IsEnum(TaskStatus)
+  status?: TaskStatus
 }
