@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from './entities/client.entity';
+import { Client, ClientStatus } from './entities/client.entity';
 
 @Injectable()
 export class ClientsService {
@@ -41,7 +41,13 @@ export class ClientsService {
 
   async remove(id: number) {
     const client = await this.findOne(id)
-    await this.clientRepository.remove(client)
+
+    if (client.projects && client.projects.length > 0) {
+      throw new BadRequestException(`Client with id ${id} cannot be removed because it is registered in one or more projects.`)
+    }
+
+    client.status = ClientStatus.INACTIVE
+    await this.clientRepository.save(client)
 
     return client;
   }
