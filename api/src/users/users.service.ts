@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User, UserStatus } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
 
@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOne({ where: { id }, relations: ['projects'] })
+    const user = await this.userRepository.findOne({ where: { id } })
     if (!user) {
       throw new NotFoundException(`User with id ${id} was not found.`)
     }
@@ -51,7 +51,9 @@ export class UsersService {
 
   async remove(id: number) {
     const user = await this.findOne(id)
-    await this.userRepository.remove(user)
+    user.status = UserStatus.INACTIVE
+    await this.userRepository.save(user)
+
     return user
   }
 }
