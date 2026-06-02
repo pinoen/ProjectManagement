@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './entities/task.entity';
+import { Task, TaskStatus } from './entities/task.entity';
 import { Repository } from 'typeorm';
 import { Project } from '../projects/entities/project.entity';
 
@@ -47,7 +47,9 @@ export class TasksService {
 
   async remove(id: number) {
     const task = await this.findOne(id)
-    await this.taskRepository.remove(task)
+
+    task.status = TaskStatus.INACTIVE
+    await this.taskRepository.save(task)
     return task;
   }
 }
