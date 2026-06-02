@@ -1,7 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Client } from "../../clients/entities/client.entity";
 import { Task } from "../../tasks/entities/task.entity";
-import { User } from "../../users/entities/user.entity";
 
 export enum ProjectStatus {
   ACTIVE = 'Activo',
@@ -26,7 +25,4 @@ export class Project {
 
   @OneToMany(() => Task, (task) => task.project)
   tasks!: Task[]
-
-  @ManyToOne(() => User, user => user.projects)
-  user!: User
 }

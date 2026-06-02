@@ -1,24 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
-import { Client } from '../clients/entities/client.entity';
+import { ClientStatus } from '../clients/entities/client.entity';
+import { ClientsService } from '../clients/clients.service';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>
+    private readonly projectRepository: Repository<Project>,
+    private readonly clientsService: ClientsService
   ) { }
   async create(createProjectDto: CreateProjectDto) {
-    const { userId, clientId, ...restOfCreate } = createProjectDto
-    const project = this.projectRepository.create({ ...restOfCreate, user: { id: userId } })
+    const { clientId, ...restOfCreate } = createProjectDto
+    const project = this.projectRepository.create({ ...restOfCreate })
 
     if (clientId) {
-      project.client = { id: clientId } as Client
+      const client = await this.clientsService.findOne(clientId)
+
+      if (client.status !== ClientStatus.ACTIVE) {
+        throw new BadRequestException(`Cannot assign client ${clientId} because they are inactive (Baja).`)
+      }
+      project.client = client
     }
 
     await this.projectRepository.save(project)
@@ -26,11 +32,11 @@ export class ProjectsService {
   }
 
   async findAll() {
-    return await this.projectRepository.find();
+    return await this.projectRepository.find({ relations: ['client', 'tasks'] });
   }
 
   async findOne(id: number) {
-    const project = await this.projectRepository.findOne({ where: { id }, relations: ['user'] })
+    const project = await this.projectRepository.findOne({ where: { id }, relations: ['client', 'tasks'] })
 
     if (!project) {
       throw new NotFoundException(`Project with id ${id} was not found.`)
@@ -40,11 +46,18 @@ export class ProjectsService {
 
   async update(id: number, updateProjectDto: UpdateProjectDto) {
     const project = await this.findOne(id);
-    const { userId, ...restOfUpdate } = updateProjectDto;
+    const { clientId, ...restOfUpdate } = updateProjectDto;
+
     Object.assign(project, restOfUpdate);
 
-    if (userId) {
-      project.user = { id: userId } as User;
+    if (clientId) {
+      const client = await this.clientsService.findOne(clientId);
+
+      if (client.status !== ClientStatus.ACTIVE) {
+        throw new BadRequestException(`Cannot assign client ${clientId} because they are inactive (Baja).`);
+      }
+
+      project.client = client;
     }
 
     await this.projectRepository.save(project);

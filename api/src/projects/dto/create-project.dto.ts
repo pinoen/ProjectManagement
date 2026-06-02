@@ -6,9 +6,6 @@ export class CreateProjectDto {
   name!: string
 
   @IsNumber()
-  userId!: number
-
-  @IsNumber()
   @IsOptional()
   clientId?: number
 
