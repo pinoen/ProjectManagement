@@ -10,6 +10,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { APP_GUARD } from '@nestjs/core';
     ProjectsModule,
     TasksModule,
     AuthModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
