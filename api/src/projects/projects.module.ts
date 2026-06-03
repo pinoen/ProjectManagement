@@ -9,5 +9,6 @@ import { ClientsModule } from '../clients/clients.module';
   imports: [TypeOrmModule.forFeature([Project]), ClientsModule],
   controllers: [ProjectsController],
   providers: [ProjectsService],
+  exports: [ProjectsService]
 })
 export class ProjectsModule { }
