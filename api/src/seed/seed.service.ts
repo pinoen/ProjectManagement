@@ -17,6 +17,13 @@ export class SeedService {
   ) { }
 
   async runSeed() {
+    // 0. Check database for existing users
+    const existingUsers = await this.usersService.findAll();
+
+    if (existingUsers.length > 0) {
+      return { message: 'Database is already seeded. No action taken! 🛑' };
+    }
+
     // 1. Seed Users
     for (const user of initialData.users) {
       await this.usersService.create(user);
