@@ -1,1 +1,26 @@
+# Env files
 .env
+.env.*
+!.env.example
+
+# Dependency directories
+node_modules/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project-specific documentation and editor configurations
+classDiagram.md
+CODEOWNERS
+.editorconfig
+.prettierrc

@@ -1,0 +1,83 @@
+[ Enunciado ] 
+
+La consultora en la que usted realiza su pasantía ha decidido iniciar el desarrollo de un
+sistema de gestión de proyectos que tiene como objetivo principal destacar por su
+simplicidad.
+Como parte del equipo de desarrollo, usted y su grupo han sido seleccionados para llevar
+adelante este proyecto, el cual servirá como evaluación clave para determinar su contratación
+en la empresa.
+
+📌 Requerimientos iniciales
+
+🔹 Acceso:
+● Se deben proporcionar las credenciales de un usuario válido para ingresar al sistema.
+Las propiedades de un usuario son su nombre de usuario, su clave, y su estado
+(Activo o baja).
+
+🔹 Gestión de proyectos:
+● Se debe poder crear y modificar proyectos, así como también ver el detalle de las
+tareas que componen cada proyecto y el cliente al que corresponde. Las propiedades
+principales de un proyecto son su nombre y estado (Activo, finalizado o baja).
+
+🔹 Gestión de clientes:
+● Al crear o modificar un proyecto, se puede especificar el cliente correspondiente si
+aplica (solo se puede elegir cliente en estado “Activo”), o no especificar ninguno si es
+un proyecto interno de la empresa. Se debe poder crear y modificar clientes de forma
+sencilla como parte del proceso de gestión de proyectos. Un cliente tiene como
+propiedades su nombre y su estado (Activo o baja). Solo se puede dar de baja un
+cliente si el mismo no está registrado en ningún proyecto.
+
+🔹 Gestión de tareas:
+● Dado un proyecto ya creado, se debe poder agregar, modificar y eliminar tareas. Cada
+tarea tiene como propiedades su descripción y estado (Pendiente, finalizado o baja).
+
+
+🔹 Restricciones de visualización:
+● Todos los proyectos, clientes, y tareas son visibles para todos los usuarios de una
+instalación del sistema. Los usuarios no son propietarios de los registros creados.
+
+
+📌 Objetivo del Trabajo
+Se espera que el equipo diseñe e implemente un sistema funcional que cumpla con estos
+requerimientos, aplicando buenas prácticas de desarrollo de software y asegurando una
+experiencia fluida para los usuarios.
+
+Para el desarrollo se deben utilizar las siguientes tecnologías: NestJS, TypeORM,
+PostgreSQL, nginx, PM2, y Angular.
+
+
+[ FUNCIONES ADICIONALES ]
+
+Teniendo en cuenta los requerimientos iniciales del Trabajo Final Integrador la
+cátedra sugiere las siguientes funcionalidades adicionales:
+
+● Historial de cambios: Registrar cambios realizados en los registros de
+cada entidad, especificando usuario que hizo el cambio y fecha del
+mismo.
+
+● Configuración de roles: Limitar ciertas funcionalidades a usuarios con
+un determinado rol (por ej: baja de proyectos o de tareas.
+
+● Búsqueda avanzada: Filtrado, ordenamiento, y paginación de tablas
+según diversos criterios, incluyendo nombre, estado, entre otros.
+● Exportación de datos: Opción para descargar información relevante en
+formato CSV.
+
+● Estadísticas: Visualización de métricas como cantidad de proyectos
+activos, cantidad total de proyectos por cliente, cantidad de tareas
+pendientes, entre otros.
+
+● Panel visual de tareas: Visualización de tareas como tarjetas en
+diferentes columnas donde cada columna filtra las tareas con un
+determinado estado.
+
+● Fecha de finalización de proyecto: definición de una fecha de
+finalización objetivo para cada proyecto, pudiendo visualizar cuánto
+tiempo queda, cuales están retrasados, etc.
+
+● Registro de datos de contacto de clientes: registrar teléfonos y correos
+electrónicos de cada cliente.
+
+● Gestión de metas intermedias: permitir la creación, modificación,
+eliminación, y visualización de metas intermedias para un proyecto dado,
+pudiendo relacionar varias tareas con una meta intermedia.
