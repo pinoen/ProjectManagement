@@ -2,10 +2,24 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './auth/auth-interceptor';
+/* [CONFIGURACION DE LA APP]
+- PrimeNg
+- Autentificacion
+- algo mas? 
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    }),
+    provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };
