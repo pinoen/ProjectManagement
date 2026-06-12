@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Header,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -27,6 +28,13 @@ export class ClientsController {
   @Get()
   findAll(@Query() query: QueryClientDto) {
     return this.clientsService.findAll(query);
+  }
+
+  @Get('export/csv')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  @Header('Content-Disposition', 'attachment; filename="clients.csv"')
+  exportCsv() {
+    return this.clientsService.exportCsv();
   }
 
   @Get(':id')

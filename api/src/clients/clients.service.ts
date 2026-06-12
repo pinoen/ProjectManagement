@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Client, ClientStatus } from './entities/client.entity';
 import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
+import { toCsvRow } from '../common/utils/csv';
 
 @Injectable()
 export class ClientsService {
@@ -40,6 +41,14 @@ export class ClientsService {
     });
 
     return new PaginatedResultDto(data, total, page, limit);
+  }
+
+  async exportCsv(): Promise<string> {
+    const clients = await this.clientRepository.find({ order: { id: 'ASC' } });
+
+    const header = toCsvRow(['ID', 'Nombre', 'Estado']);
+    const rows = clients.map(c => toCsvRow([c.id, c.name, c.status]));
+    return '\uFEFF' + header + rows.join('');
   }
 
   async findOne(id: number) {

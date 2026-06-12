@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Header } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -18,6 +18,13 @@ export class TasksController {
   @Get()
   findAll(@Query() query: QueryTaskDto) {
     return this.tasksService.findAll(query);
+  }
+
+  @Get('export/csv')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  @Header('Content-Disposition', 'attachment; filename="tasks.csv"')
+  exportCsv() {
+    return this.tasksService.exportCsv();
   }
 
   @Get(':id')

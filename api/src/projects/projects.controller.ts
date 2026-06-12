@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Header } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -18,6 +18,13 @@ export class ProjectsController {
   @Get()
   findAll(@Query() query: QueryProjectDto) {
     return this.projectsService.findAll(query);
+  }
+
+  @Get('export/csv')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  @Header('Content-Disposition', 'attachment; filename="projects.csv"')
+  exportCsv() {
+    return this.projectsService.exportCsv();
   }
 
   @Get(':id')

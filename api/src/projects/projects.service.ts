@@ -8,6 +8,7 @@ import { Repository, ILike } from 'typeorm';
 import { ClientStatus } from '../clients/entities/client.entity';
 import { ClientsService } from '../clients/clients.service';
 import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
+import { toCsvRow } from '../common/utils/csv';
 
 @Injectable()
 export class ProjectsService {
@@ -59,6 +60,14 @@ export class ProjectsService {
     });
 
     return new PaginatedResultDto(data, total, page, limit);
+  }
+
+  async exportCsv(): Promise<string> {
+    const projects = await this.projectRepository.find({ order: { id: 'ASC' }, relations: ['client'] });
+
+    const header = toCsvRow(['ID', 'Nombre', 'Estado', 'Cliente']);
+    const rows = projects.map(p => toCsvRow([p.id, p.name, p.status, p.client?.name ?? '']));
+    return '\uFEFF' + header + rows.join('');
   }
 
   async findOne(id: number) {
