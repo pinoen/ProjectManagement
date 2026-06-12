@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, AfterLoad } from "typeorm";
 import { Project } from "../../projects/entities/project.entity";
 
 export enum TaskStatus {
@@ -20,4 +20,20 @@ export class Task {
 
   @ManyToOne(() => Project, project => project.tasks)
   project!: Project
+
+  @Column({ type: 'date', nullable: true })
+  deadline?: Date
+
+  remainingDays?: number | null
+
+  @AfterLoad()
+  computeRemainingDays() {
+    if (this.deadline) {
+      const now = new Date();
+      const diff = new Date(this.deadline).getTime() - now.getTime();
+      this.remainingDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    } else {
+      this.remainingDays = null;
+    }
+  }
 }

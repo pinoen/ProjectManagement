@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, IsDateString } from "class-validator";
 import { TaskStatus } from "../entities/task.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -20,4 +20,9 @@ export class CreateTaskDto {
   @IsOptional()
   @IsEnum(TaskStatus)
   status?: TaskStatus;
+
+  @ApiProperty({ example: '2026-12-31', description: 'Task deadline (ISO date)', required: false })
+  @IsOptional()
+  @IsDateString()
+  deadline?: string;
 }

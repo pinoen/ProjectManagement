@@ -7,6 +7,14 @@ import { initialData } from './data/seed-data';
 import { Client, ClientStatus } from '../clients/entities/client.entity';
 import { Project } from '../projects/entities/project.entity';
 
+function randomDeadline(): string {
+  const now = new Date();
+  const offsetDays = Math.floor(Math.random() * 90) - 30;
+  const deadline = new Date(now);
+  deadline.setDate(deadline.getDate() + offsetDays);
+  return deadline.toISOString().split('T')[0];
+}
+
 @Injectable()
 export class SeedService {
   constructor(
@@ -50,7 +58,8 @@ export class SeedService {
 
       const newProject = await this.projectsService.create({
         ...project,
-        clientId: isInternal ? undefined : randomClient.id // Safe linking!
+        deadline: randomDeadline(),
+        clientId: isInternal ? undefined : randomClient.id
       });
 
       createdProjects.push(newProject);
@@ -63,7 +72,8 @@ export class SeedService {
 
       await this.tasksService.create({
         ...task,
-        projectId: randomProject.id // Safe linking!
+        deadline: randomDeadline(),
+        projectId: randomProject.id
       });
     }
 

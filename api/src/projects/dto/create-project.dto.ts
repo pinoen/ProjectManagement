@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, IsDateString } from "class-validator";
 import { ProjectStatus } from "../entities/project.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -25,4 +25,9 @@ export class CreateProjectDto {
   @IsOptional()
   @IsEnum(ProjectStatus)
   status?: ProjectStatus;
+
+  @ApiProperty({ example: '2026-12-31', description: 'Project deadline (ISO date)', required: false })
+  @IsOptional()
+  @IsDateString()
+  deadline?: string;
 }
