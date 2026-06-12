@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { QueryClientDto } from './dto/query-client.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth('JWT-auth')
@@ -23,8 +25,8 @@ export class ClientsController {
   }
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query() query: QueryClientDto) {
+    return this.clientsService.findAll(query);
   }
 
   @Get(':id')

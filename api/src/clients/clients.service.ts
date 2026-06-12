@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { QueryClientDto } from './dto/query-client.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Client, ClientStatus } from './entities/client.entity';
+import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
 
 @Injectable()
 export class ClientsService {
@@ -17,8 +19,27 @@ export class ClientsService {
     return client;
   }
 
-  async findAll() {
-    return await this.clientRepository.find()
+  async findAll(query: QueryClientDto): Promise<PaginatedResultDto<Client>> {
+    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status } = query;
+
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (search) {
+      where.name = ILike(`%${search}%`);
+    }
+
+    const [data, total] = await this.clientRepository.findAndCount({
+      where,
+      order: { [sortBy]: sortOrder },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return new PaginatedResultDto(data, total, page, limit);
   }
 
   async findOne(id: number) {

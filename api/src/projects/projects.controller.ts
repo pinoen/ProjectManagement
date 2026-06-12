@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { QueryProjectDto } from './dto/query-project.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth('JWT-auth')
@@ -15,8 +16,8 @@ export class ProjectsController {
   }
 
   @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@Query() query: QueryProjectDto) {
+    return this.projectsService.findAll(query);
   }
 
   @Get(':id')

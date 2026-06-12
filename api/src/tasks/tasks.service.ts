@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { QueryTaskDto } from './dto/query-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Project } from '../projects/entities/project.entity';
+import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
 
 @Injectable()
 export class TasksService {
@@ -19,8 +21,32 @@ export class TasksService {
     return task;
   }
 
-  async findAll() {
-    return await this.taskRepository.find();
+  async findAll(query: QueryTaskDto): Promise<PaginatedResultDto<Task>> {
+    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, projectId } = query;
+
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (projectId) {
+      where.project = { id: projectId };
+    }
+
+    if (search) {
+      where.description = ILike(`%${search}%`);
+    }
+
+    const [data, total] = await this.taskRepository.findAndCount({
+      where,
+      order: { [sortBy]: sortOrder },
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['project'],
+    });
+
+    return new PaginatedResultDto(data, total, page, limit);
   }
 
   async findOne(id: number) {
