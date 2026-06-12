@@ -1,11 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { QueryProjectDto } from './dto/query-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { ClientStatus } from '../clients/entities/client.entity';
 import { ClientsService } from '../clients/clients.service';
+import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
+import { toCsvRow } from '../common/utils/csv';
 
 @Injectable()
 export class ProjectsService {
@@ -31,8 +34,40 @@ export class ProjectsService {
     return project;
   }
 
-  async findAll() {
-    return await this.projectRepository.find({ relations: ['client', 'tasks'] });
+  async findAll(query: QueryProjectDto): Promise<PaginatedResultDto<Project>> {
+    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, clientId } = query;
+
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (clientId) {
+      where.client = { id: clientId };
+    }
+
+    if (search) {
+      where.name = ILike(`%${search}%`);
+    }
+
+    const [data, total] = await this.projectRepository.findAndCount({
+      where,
+      order: { [sortBy]: sortOrder },
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['client', 'tasks'],
+    });
+
+    return new PaginatedResultDto(data, total, page, limit);
+  }
+
+  async exportCsv(): Promise<string> {
+    const projects = await this.projectRepository.find({ order: { id: 'ASC' }, relations: ['client'] });
+
+    const header = toCsvRow(['ID', 'Nombre', 'Estado', 'Cliente']);
+    const rows = projects.map(p => toCsvRow([p.id, p.name, p.status, p.client?.name ?? '']));
+    return '\uFEFF' + header + rows.join('');
   }
 
   async findOne(id: number) {

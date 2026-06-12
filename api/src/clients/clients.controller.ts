@@ -6,11 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  Header,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { QueryClientDto } from './dto/query-client.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT-auth')
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) { }
@@ -21,8 +26,15 @@ export class ClientsController {
   }
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@Query() query: QueryClientDto) {
+    return this.clientsService.findAll(query);
+  }
+
+  @Get('export/csv')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  @Header('Content-Disposition', 'attachment; filename="clients.csv"')
+  exportCsv() {
+    return this.clientsService.exportCsv();
   }
 
   @Get(':id')
