@@ -1,7 +1,47 @@
-<header id="header">
-    <h1 id="nombre-de-proyecto">Sistema de Gestión de Proyectos</h1>
-    <p-button id="boton-cerrar-sesion" icon="pi pi-sign-out" label="Cerrar Sesión" (click)="cerrarSesion()"></p-button>
-</header>
-<div id="content">
-    <ng-content></ng-content>
+<div id="layout-container">
+    <!-- Sidebar Izquierda -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <span>DAW-AT</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a routerLink="/inicio" routerLinkActive="active-link" class="nav-item">
+                <i class="pi pi-home nav-icon"></i>
+                <span>Inicio</span>
+            </a>
+            <a routerLink="/proyectos" routerLinkActive="active-link" class="nav-item">
+                <i class="pi pi-folder nav-icon"></i>
+                <span>Proyectos</span>
+            </a>
+            <a routerLink="/clientes" routerLinkActive="active-link" class="nav-item">
+                <i class="pi pi-users nav-icon"></i>
+                <span>Clientes</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="pi pi-user"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">GrupoAT</span>
+                    <span class="user-role">Materia DAW</span>
+                </div>
+            </div>
+            <p-button id="boton-cerrar-sesion" icon="pi pi-sign-out" label="Cerrar Sesión" [text]="true"
+                severity="danger" (click)="cerrarSesion()"></p-button>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <div id="main-wrapper">
+        <header id="header">
+            <h1 id="nombre-de-proyecto">Sistema de Gestión de Proyectos</h1>
+        </header>
+        <main id="content">
+            <ng-content></ng-content>
+        </main>
+    </div>
 </div>

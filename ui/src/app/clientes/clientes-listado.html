@@ -1,0 +1,86 @@
+<app-template>
+  <div class="glass-panel main-container animate-fade-in">
+    <!-- HEADER -->
+    <div class="header-section">
+      <div class="title-container">
+        <h2>Gestión de Clientes</h2>
+        <p class="subtitle">Registra y administra las empresas y clientes asociados a tus desarrollos.</p>
+      </div>
+      <p-button label="Nuevo Cliente" icon="pi pi-plus" (click)="abrirDialogoCrear()"
+        class="btn-create-client"></p-button>
+    </div>
+
+    <!-- Tabla de Clientes -->
+    <div class="table-wrapper">
+      <p-table [value]="clientes" responsiveLayout="scroll" styleClass="p-datatable-custom">
+        <ng-template #header>
+          <tr>
+            <th style="width: 50%">Nombre del Cliente</th>
+            <th style="width: 30%">Estado</th>
+            <th style="width: 20%; text-align: center">Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-cliente>
+          <tr class="client-row">
+            <td class="client-name-cell">
+              <i class="pi pi-user user-avatar-icon"></i>
+              <span>{{ cliente.name }}</span>
+            </td>
+            <td>
+              <p-tag [value]="cliente.status" [severity]="cliente.status === 'Activo' ? 'success' : 'danger'"
+                [rounded]="true"></p-tag>
+            </td>
+            <td class="actions-cell">
+              <div class="actions-group">
+                <p-button icon="pi pi-pencil" [rounded]="true" severity="warn" [text]="true" pTooltip="Editar Cliente"
+                  tooltipPosition="top" (click)="abrirDialogoEditar(cliente)"></p-button>
+                <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" pTooltip="Dar de Baja"
+                  tooltipPosition="top" (click)="eliminarCliente(cliente.id)"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="3" class="empty-message-cell">
+              <div class="empty-message-container">
+                <i class="pi pi-users empty-icon"></i>
+                <p>No se encontraron clientes registrados.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Crear / Editar Cliente -->
+  <p-dialog [header]="esEdicion ? 'Editar Cliente' : 'Nuevo Cliente'" [(visible)]="dialogoClienteVisible" [modal]="true"
+    [resizable]="false" [draggable]="false" class="custom-dialog">
+    <div class="dialog-content">
+      <div class="field">
+        <label for="name">Nombre del Cliente</label>
+        <input id="name" type="text" pInputText [(ngModel)]="clienteEnEdicion.name" placeholder="Ej. Litoral Cloud"
+          autocomplete="off" />
+      </div>
+
+      @if (esEdicion) {
+      <div class="field">
+        <label for="estado">Estado</label>
+        <p-select id="estado" [options]="[
+            { label: 'Activo', value: 'Activo' },
+            { label: 'Baja', value: 'Baja' }
+          ]" [(ngModel)]="clienteEnEdicion.status" optionLabel="label" optionValue="value"
+          placeholder="Seleccione un estado" class="w-full"></p-select>
+      </div>
+      }
+    </div>
+
+    <ng-template #footer>
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary"
+        (click)="dialogoClienteVisible = false"></p-button>
+      <p-button [label]="esEdicion ? 'Guardar' : 'Crear'" icon="pi pi-check" (click)="guardarCliente()"
+        [disabled]="!clienteEnEdicion.name"></p-button>
+    </ng-template>
+  </p-dialog>
+</app-template>
