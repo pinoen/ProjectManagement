@@ -58,12 +58,12 @@ export class TasksService {
     return new PaginatedResultDto(data, total, page, limit);
   }
 
-  async exportCsv(): Promise<string> {
+  async exportCsv(): Promise<Buffer> {
     const tasks = await this.taskRepository.find({ order: { id: 'ASC' }, relations: ['project'] });
 
     const header = toCsvRow(['ID', 'Descripcion', 'Estado', 'Proyecto', 'FechaLimite', 'DiasRestantes']);
     const rows = tasks.map(t => toCsvRow([t.id, t.description, t.status, t.project?.name ?? '', t.deadline ?? '', t.remainingDays ?? '']));
-    return '\uFEFF' + header + rows.join('');
+    return Buffer.from('\uFEFF' + header + rows.join(''), 'utf-8');
   }
 
   async findOne(id: number) {

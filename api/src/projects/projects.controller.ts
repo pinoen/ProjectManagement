@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Header } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, StreamableFile } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -21,10 +21,11 @@ export class ProjectsController {
   }
 
   @Get('export/csv')
-  @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="projects.csv"')
-  exportCsv() {
-    return this.projectsService.exportCsv();
+  async exportCsv(): Promise<StreamableFile> {
+    return new StreamableFile(await this.projectsService.exportCsv(), {
+      type: 'text/csv; charset=utf-8',
+      disposition: 'attachment; filename="projects.csv"',
+    });
   }
 
   @Get(':id')

@@ -43,12 +43,12 @@ export class ClientsService {
     return new PaginatedResultDto(data, total, page, limit);
   }
 
-  async exportCsv(): Promise<string> {
+  async exportCsv(): Promise<Buffer> {
     const clients = await this.clientRepository.find({ order: { id: 'ASC' } });
 
     const header = toCsvRow(['ID', 'Nombre', 'Estado']);
     const rows = clients.map(c => toCsvRow([c.id, c.name, c.status]));
-    return '\uFEFF' + header + rows.join('');
+    return Buffer.from('\uFEFF' + header + rows.join(''), 'utf-8');
   }
 
   async findOne(id: number) {
