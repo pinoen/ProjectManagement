@@ -70,12 +70,12 @@ export class ProjectsService {
     return new PaginatedResultDto(data, total, page, limit);
   }
 
-  async exportCsv(): Promise<string> {
+  async exportCsv(): Promise<Buffer> {
     const projects = await this.projectRepository.find({ order: { id: 'ASC' }, relations: ['client'] });
 
     const header = toCsvRow(['ID', 'Nombre', 'Estado', 'Cliente', 'FechaLimite', 'DiasRestantes']);
     const rows = projects.map(p => toCsvRow([p.id, p.name, p.status, p.client?.name ?? '', p.deadline ?? '', p.remainingDays ?? '']));
-    return '\uFEFF' + header + rows.join('');
+    return Buffer.from('\uFEFF' + header + rows.join(''), 'utf-8');
   }
 
   async findOne(id: number) {
