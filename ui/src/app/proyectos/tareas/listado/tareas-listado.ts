@@ -10,6 +10,9 @@ import { TooltipModule } from "primeng/tooltip";
 import { DialogModule } from "primeng/dialog";
 import { Checkbox } from "primeng/checkbox";
 import { MessageService } from "primeng/api";
+import { HttpClient } from "@angular/common/http";
+import { DatePipe } from "@angular/common";
+import { API_URL } from "../../../app.constants";
 import { Template } from "../../../template/template";
 import { ProyectosApiClient, Project } from "../../proyectos-api-client";
 import { TareasApiClient, Task } from "../tareas-api-client";
@@ -28,7 +31,8 @@ import { TareasApiClient, Task } from "../tareas-api-client";
     TagModule,
     TooltipModule,
     DialogModule,
-    Checkbox
+    Checkbox,
+    DatePipe
   ]
 })
 export class TareasListado implements OnInit {
@@ -38,22 +42,37 @@ export class TareasListado implements OnInit {
   private readonly tareasApiClient: TareasApiClient = inject(TareasApiClient);
   private readonly messageService: MessageService = inject(MessageService);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly http: HttpClient = inject(HttpClient);
 
   projectId!: number;
   proyecto: Project | null = null;
-  
+
   tareas: Task[] = [];
 
-  // Formulario modal de tareas
+  // Paginaciom y búsqueda
+  page: number = 1;
+  limit: number = 10;
+  search: string = "";
+  status: string | null = null;
+  totalRecords: number = 0;
+  totalPages: number = 0;
+
+  estadosFiltro = [
+    { label: "Todos", value: null },
+    { label: "Pendiente", value: "Pendiente" },
+    { label: "Finalizado", value: "Finalizado" },
+    { label: "Baja", value: "Baja" }
+  ];
+
+  // Formulario de tareas
   dialogoTareaVisible: boolean = false;
-  tareaEnEdicion: { id?: number; description: string; status?: 'Pendiente' | 'Finalizado' | 'Baja'; projectId?: number } = { description: "" };
+  tareaEnEdicion: { id?: number; description: string; status?: 'Pendiente' | 'Finalizado' | 'Baja'; projectId?: number; deadline?: string } = { description: "" };
   esEdicion: boolean = false;
-
-
 
   ngOnInit() {
     this.projectId = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarDatosProyecto();
+    this.cargarTareas();
   }
 
   cargarDatosProyecto() {
@@ -61,13 +80,60 @@ export class TareasListado implements OnInit {
       next: (data) => {
         setTimeout(() => {
           this.proyecto = data;
-          this.tareas = data.tasks || [];
-          this.tareas.forEach(t => t.projectId = this.projectId);
           this.cdr.detectChanges();
         });
       },
       error: (err) => {
-        this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo cargar el proyecto ni sus tareas." });
+        this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo cargar el proyecto." });
+      }
+    });
+  }
+
+  cargarTareas() {
+    this.tareasApiClient.findAll({
+      projectId: this.projectId,
+      page: this.page,
+      limit: this.limit,
+      search: this.search,
+      status: this.status || undefined
+    }).subscribe({
+      next: (res) => {
+        setTimeout(() => {
+          this.tareas = res.data;
+          this.totalRecords = res.total;
+          this.totalPages = res.totalPages;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudieron cargar las tareas." });
+      }
+    });
+  }
+
+  onSearch() {
+    this.page = 1;
+    this.cargarTareas();
+  }
+
+  onPageChange(newPage: number) {
+    this.page = newPage;
+    this.cargarTareas();
+  }
+
+  exportarCSV() {
+    this.http.get(`${API_URL}/tasks/export/csv`, { responseType: 'text' }).subscribe({
+      next: (csvContent) => {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tareas-proyecto-${this.projectId}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo exportar a CSV." });
       }
     });
   }
@@ -87,27 +153,28 @@ export class TareasListado implements OnInit {
 
   abrirDialogoCrear() {
     this.esEdicion = false;
-    this.tareaEnEdicion = { description: "", status: "Pendiente", projectId: this.projectId };
+    this.tareaEnEdicion = { description: "", status: "Pendiente", projectId: this.projectId, deadline: "" };
     this.dialogoTareaVisible = true;
   }
 
   abrirDialogoEditar(tarea: Task) {
     this.esEdicion = true;
-    this.tareaEnEdicion = { 
+    this.tareaEnEdicion = {
       id: tarea.id,
       description: tarea.description,
       status: tarea.status,
-      projectId: this.projectId
+      projectId: this.projectId,
+      deadline: tarea.deadline ? tarea.deadline.split('T')[0] : ''
     };
     this.dialogoTareaVisible = true;
   }
 
   toggleCompletada(tarea: Task) {
     const nuevoEstado = tarea.status === 'Finalizado' ? 'Pendiente' : 'Finalizado';
-    
+
     this.tareasApiClient.update(tarea.id, { status: nuevoEstado }).subscribe({
       next: () => {
-        this.cargarDatosProyecto();
+        this.cargarTareas();
       },
       error: (err) => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo actualizar el estado de la tarea." });
@@ -122,13 +189,14 @@ export class TareasListado implements OnInit {
       const payload = {
         description: this.tareaEnEdicion.description,
         status: this.tareaEnEdicion.status,
-        projectId: this.projectId
+        projectId: this.projectId,
+        deadline: this.tareaEnEdicion.deadline || undefined
       };
 
       this.tareasApiClient.update(this.tareaEnEdicion.id, payload).subscribe({
         next: () => {
           this.messageService.add({ severity: "success", summary: "Éxito", detail: "Tarea actualizada." });
-          this.cargarDatosProyecto();
+          this.cargarTareas();
           this.dialogoTareaVisible = false;
         },
         error: (err) => {
@@ -139,13 +207,14 @@ export class TareasListado implements OnInit {
       const payload = {
         description: this.tareaEnEdicion.description,
         projectId: this.projectId,
-        status: this.tareaEnEdicion.status || 'Pendiente'
+        status: this.tareaEnEdicion.status || 'Pendiente',
+        deadline: this.tareaEnEdicion.deadline || undefined
       };
 
       this.tareasApiClient.create(payload).subscribe({
         next: () => {
           this.messageService.add({ severity: "success", summary: "Éxito", detail: "Tarea creada." });
-          this.cargarDatosProyecto();
+          this.cargarTareas();
           this.dialogoTareaVisible = false;
         },
         error: (err) => {
@@ -159,7 +228,7 @@ export class TareasListado implements OnInit {
     this.tareasApiClient.remove(id).subscribe({
       next: () => {
         this.messageService.add({ severity: "success", summary: "Éxito", detail: "Tarea eliminada (Baja)." });
-        this.cargarDatosProyecto();
+        this.cargarTareas();
       },
       error: (err) => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo eliminar la tarea." });

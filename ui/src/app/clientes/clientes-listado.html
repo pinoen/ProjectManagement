@@ -10,6 +10,18 @@
         class="btn-create-client"></p-button>
     </div>
 
+    <!-- Barra de acciones y filtros -->
+    <div class="filters-container">
+      <div class="search-box">
+        <i class="pi pi-search search-icon"></i>
+        <input pInputText placeholder="Buscar cliente por nombre..." [(ngModel)]="search" (input)="onSearch()" class="search-input" />
+      </div>
+      
+      <p-select [options]="estadosFiltro" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Filtrar por estado" (onChange)="onSearch()" [showClear]="true" class="status-select"></p-select>
+      
+      <p-button label="Exportar CSV" icon="pi pi-download" severity="help" (click)="exportarCSV()" class="btn-csv ml-auto"></p-button>
+    </div>
+
     <!-- Tabla de Clientes -->
     <div class="table-wrapper">
       <p-table [value]="clientes" responsiveLayout="scroll" styleClass="p-datatable-custom">
@@ -51,6 +63,13 @@
           </tr>
         </ng-template>
       </p-table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination-bar glass-panel mt-3">
+      <p-button icon="pi pi-chevron-left" [disabled]="page === 1" (click)="onPageChange(page - 1)" [text]="true" severity="secondary"></p-button>
+      <span class="pagination-info">Página {{ page }} de {{ totalPages }} (Total: {{ totalRecords }})</span>
+      <p-button icon="pi pi-chevron-right" [disabled]="page === totalPages" (click)="onPageChange(page + 1)" [text]="true" severity="secondary"></p-button>
     </div>
   </div>
 

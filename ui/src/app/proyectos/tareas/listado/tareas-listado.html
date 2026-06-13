@@ -40,15 +40,29 @@
       <p-button label="Nueva Tarea" icon="pi pi-plus" (click)="abrirDialogoCrear()" class="btn-create-task"></p-button>
     </div>
 
+    <!-- Barra de acciones y filtros -->
+    <div class="filters-container">
+      <div class="search-box">
+        <i class="pi pi-search search-icon"></i>
+        <input pInputText placeholder="Buscar tarea por descripción..." [(ngModel)]="search" (input)="onSearch()" class="search-input" />
+      </div>
+      
+      <p-select [options]="estadosFiltro" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Filtrar por estado" (onChange)="onSearch()" [showClear]="true" class="status-select"></p-select>
+      
+      <p-button label="Exportar CSV" icon="pi pi-download" severity="help" (click)="exportarCSV()" class="btn-csv ml-auto"></p-button>
+    </div>
+
     <!-- Lista/Tabla de Tareas -->
     <div class="table-wrapper">
       <p-table [value]="tareas" responsiveLayout="scroll" styleClass="p-datatable-custom">
         <ng-template #header>
           <tr>
-            <th style="width: 8%; text-align: center">Ok</th>
-            <th style="width: 52%">Descripción</th>
-            <th style="width: 20%">Estado</th>
-            <th style="width: 20%; text-align: center">Acciones</th>
+            <th style="width: 6%; text-align: center">Ok</th>
+            <th style="width: 34%">Descripción</th>
+            <th style="width: 15%">Fecha Límite</th>
+            <th style="width: 15%">Plazo</th>
+            <th style="width: 15%">Estado</th>
+            <th style="width: 15%; text-align: center">Acciones</th>
           </tr>
         </ng-template>
         <ng-template #body let-tarea>
@@ -68,6 +82,22 @@
               {{ tarea.description }}
             </td>
             <td>
+              <span>{{ tarea.deadline ? (tarea.deadline | date:'dd/MM/yyyy') : '-' }}</span>
+            </td>
+            <td>
+              @if (tarea.remainingDays !== null && tarea.remainingDays !== undefined) {
+                @if (tarea.remainingDays > 0) {
+                  <span class="deadline-badge safe">Quedan {{ tarea.remainingDays }} días</span>
+                } @else if (tarea.remainingDays === 0) {
+                  <span class="deadline-badge warning">Vence hoy</span>
+                } @else {
+                  <span class="deadline-badge danger">Retrasado {{ -tarea.remainingDays }} días</span>
+                }
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
               <p-tag [value]="tarea.status" [severity]="obtenerSeveridadEstado(tarea.status)" [rounded]="true"></p-tag>
             </td>
             <td class="actions-cell">
@@ -84,7 +114,7 @@
         </ng-template>
         <ng-template #emptymessage>
           <tr>
-            <td colspan="4" class="empty-message-cell">
+            <td colspan="6" class="empty-message-cell">
               <div class="empty-message-container">
                 <i class="pi pi-check-circle empty-icon"></i>
                 <p>No hay tareas pendientes en esta vista.</p>
@@ -94,6 +124,13 @@
         </ng-template>
       </p-table>
     </div>
+
+    <!-- Paginación -->
+    <div class="pagination-bar glass-panel mt-3">
+      <p-button icon="pi pi-chevron-left" [disabled]="page === 1" (click)="onPageChange(page - 1)" [text]="true" severity="secondary"></p-button>
+      <span class="pagination-info">Página {{ page }} de {{ totalPages }} (Total: {{ totalRecords }})</span>
+      <p-button icon="pi pi-chevron-right" [disabled]="page === totalPages" (click)="onPageChange(page + 1)" [text]="true" severity="secondary"></p-button>
+    </div>
   </div>
 
   <!-- Diálogo para Crear / Editar Tarea -->
@@ -102,6 +139,11 @@
       <div class="field">
         <label for="desc">Descripción de la Tarea</label>
         <input id="desc" type="text" pInputText [(ngModel)]="tareaEnEdicion.description" placeholder="Ej. Implementar validaciones" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="deadline">Fecha Límite</label>
+        <input id="deadline" type="date" pInputText [(ngModel)]="tareaEnEdicion.deadline" class="w-full" />
       </div>
 
       @if (esEdicion) {

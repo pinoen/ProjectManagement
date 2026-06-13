@@ -4,10 +4,225 @@
     <div class="glass-panel welcome-banner">
       <div class="welcome-text">
         <h2>¡Hola de nuevo, Administrador!</h2>
-        <p>Este es el panel de control de tu consultora. Utiliza el menú lateral para gestionar tus proyectos, clientes y tareas de manera centralizada.</p>
+        <p>Este es el panel de control de tu consultora. Utiliza el menú lateral para gestionar tus proyectos, clientes
+          y tareas de manera centralizada.</p>
       </div>
       <div class="welcome-icon">
         <i class="pi pi-chart-line"></i>
+      </div>
+    </div>
+
+    <!-- ESTADISTICAS PRINCIPALES -->
+    <div class="metrics-grid">
+      <!-- Proyectos Activos -->
+      <div class="glass-panel metric-card border-left-info">
+        <div class="metric-content">
+          <span class="metric-title">Proyectos Activos</span>
+          <span class="metric-value">{{ proyectosActivosCount }}</span>
+        </div>
+        <div class="metric-icon bg-info-light text-info">
+          <i class="pi pi-folder"></i>
+        </div>
+      </div>
+
+      <!-- Clientes Activos -->
+      <div class="glass-panel metric-card border-left-success">
+        <div class="metric-content">
+          <span class="metric-title">Clientes Activos</span>
+          <span class="metric-value">{{ clientesActivosCount }}</span>
+        </div>
+        <div class="metric-icon bg-success-light text-success">
+          <i class="pi pi-users"></i>
+        </div>
+      </div>
+
+      <!-- Tareas Pendientes -->
+      <div class="glass-panel metric-card border-left-warning">
+        <div class="metric-content">
+          <span class="metric-title">Tareas Pendientes</span>
+          <span class="metric-value">{{ tareasPendientesCount }}</span>
+        </div>
+        <div class="metric-icon bg-warning-light text-warning">
+          <i class="pi pi-check-square"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles -->
+    <div class="dashboard-details-row">
+      <!-- Proyectos por Cliente -->
+      <div class="glass-panel recent-projects-section">
+        <h3>Proyectos por Cliente</h3>
+        <div
+          style="background: rgba(15, 23, 42, 0.25); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; padding: 0.5rem 1rem;">
+          <table style="border-collapse: collapse; width: 100%;">
+            <thead>
+              <tr
+                style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;">
+                <th style="padding: 1rem 0.5rem; text-align: left;">Cliente / Tipo</th>
+                <th style="padding: 1rem 0.5rem; text-align: right;">Cantidad de Proyectos</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of proyectosPorCliente; track item.clienteName) {
+              <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: #e2e8f0; font-size: 0.95rem;">
+                <td style="padding: 1rem 0.5rem; text-align: left;">
+                  @if (item.clienteName === 'Proyecto Interno') {
+                  <span class="internal-badge-simple"><i class="pi pi-building"
+                      style="font-size: 0.8rem; margin-right: 0.25rem;"></i> Interno</span>
+                  } @else {
+                  <span class="client-badge-simple"><i class="pi pi-user"
+                      style="font-size: 0.8rem; margin-right: 0.25rem;"></i> {{ item.clienteName }}</span>
+                  }
+                </td>
+                <td style="padding: 1rem 0.5rem; text-align: right; font-weight: 700; color: #f8fafc;">
+                  {{ item.proyectosCount }}
+                </td>
+              </tr>
+              }
+              @if (proyectosPorCliente.length === 0) {
+              <tr>
+                <td colspan="2" style="padding: 2rem 0; text-align: center; color: #64748b;">
+                  No hay proyectos registrados para mostrar estadísticas.
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proyectos Próximos a Vencer -->
+    <div class="glass-panel recent-projects-section" style="margin-top: 1.5rem;">
+      <h3>Proyectos cerca de la fecha límite o atrasados</h3>
+      <div
+        style="background: rgba(15, 23, 42, 0.25); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; padding: 0.5rem 1rem;">
+        <table style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr
+              style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;">
+              <th style="padding: 1rem 0.5rem; text-align: left;">Proyecto</th>
+              <th style="padding: 1rem 0.5rem; text-align: left;">Cliente</th>
+              <th style="padding: 1rem 0.5rem; text-align: left;">Fecha Límite</th>
+              <th style="padding: 1rem 0.5rem; text-align: right;">Plazo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (proyecto of proyectosPorVencer; track proyecto.id) {
+            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: #e2e8f0; font-size: 0.95rem;">
+              <td style="padding: 1rem 0.5rem; text-align: left; font-weight: 600;">
+                <i class="pi pi-folder-open" style="color: #6366f1; margin-right: 0.5rem;"></i>
+                {{ proyecto.name }}
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: left;">
+                @if (proyecto.client) {
+                <span class="client-badge-simple"><i class="pi pi-user"
+                    style="font-size: 0.8rem; margin-right: 0.25rem;"></i> {{ proyecto.client.name }}</span>
+                } @else {
+                <span class="internal-badge-simple"><i class="pi pi-building"
+                    style="font-size: 0.8rem; margin-right: 0.25rem;"></i> Interno</span>
+                }
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: left; color: #cbd5e1;">
+                {{ proyecto.deadline | date:'dd/MM/yyyy' }}
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: right;">
+                @if (proyecto.remainingDays !== null && proyecto.remainingDays !== undefined) {
+                @if (proyecto.remainingDays > 0) {
+                <span class="deadline-badge safe"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2);">Quedan
+                  {{ proyecto.remainingDays }} días</span>
+                } @else if (proyecto.remainingDays === 0) {
+                <span class="deadline-badge warning"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2);">Vence
+                  hoy</span>
+                } @else {
+                <span class="deadline-badge danger"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2);">Retrasado
+                  {{ -proyecto.remainingDays }} días</span>
+                }
+                } @else {
+                -
+                }
+              </td>
+            </tr>
+            }
+            @if (proyectosPorVencer.length === 0) {
+            <tr>
+              <td colspan="4" style="padding: 2rem 0; text-align: center; color: #64748b;">
+                No hay proyectos activos con plazos críticos menores a 7 días.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tareas cerca de la fecha límite o atrasadas -->
+    <div class="glass-panel recent-projects-section" style="margin-top: 1.5rem;">
+      <h3>Tareas cerca de la fecha límite o atrasadas</h3>
+      <div
+        style="background: rgba(15, 23, 42, 0.25); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; padding: 0.5rem 1rem;">
+        <table style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr
+              style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #94a3b8; font-size: 0.85rem; text-transform: uppercase;">
+              <th style="padding: 1rem 0.5rem; text-align: left;">Tarea</th>
+              <th style="padding: 1rem 0.5rem; text-align: left;">Proyecto</th>
+              <th style="padding: 1rem 0.5rem; text-align: left;">Fecha Límite</th>
+              <th style="padding: 1rem 0.5rem; text-align: right;">Plazo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tarea of tareasPorVencer; track tarea.id) {
+            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: #e2e8f0; font-size: 0.95rem;">
+              <td style="padding: 1rem 0.5rem; text-align: left; font-weight: 600;">
+                <i class="pi pi-check-square" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+                {{ tarea.description }}
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: left;">
+                @if (tarea.project) {
+                <span class="client-badge-simple"><i class="pi pi-folder"
+                    style="font-size: 0.8rem; margin-right: 0.25rem;"></i> {{ tarea.project.name }}</span>
+                } @else {
+                <span class="internal-badge-simple">-</span>
+                }
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: left; color: #cbd5e1;">
+                {{ tarea.deadline | date:'dd/MM/yyyy' }}
+              </td>
+              <td style="padding: 1rem 0.5rem; text-align: right;">
+                @if (tarea.remainingDays !== null && tarea.remainingDays !== undefined) {
+                @if (tarea.remainingDays > 0) {
+                <span class="deadline-badge safe"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2);">Quedan
+                  {{ tarea.remainingDays }} días</span>
+                } @else if (tarea.remainingDays === 0) {
+                <span class="deadline-badge warning"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2);">Vence
+                  hoy</span>
+                } @else {
+                <span class="deadline-badge danger"
+                  style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2);">Retrasado
+                  {{ -tarea.remainingDays }} días</span>
+                }
+                } @else {
+                -
+                }
+              </td>
+            </tr>
+            }
+            @if (tareasPorVencer.length === 0) {
+            <tr>
+              <td colspan="4" style="padding: 2rem 0; text-align: center; color: #64748b;">
+                No hay tareas pendientes con plazos críticos menores a 7 días.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
 

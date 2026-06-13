@@ -9,6 +9,9 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DialogModule } from "primeng/dialog";
 import { MessageService } from "primeng/api";
+import { HttpClient } from "@angular/common/http";
+import { DatePipe } from "@angular/common";
+import { API_URL } from "../../app.constants";
 import { Template } from "../../template/template";
 import { ProyectosApiClient, Project, Client } from "../proyectos-api-client";
 import { ClientesApiClient } from "../clientes-api-client";
@@ -26,7 +29,8 @@ import { ClientesApiClient } from "../clientes-api-client";
     SelectModule,
     TagModule,
     TooltipModule,
-    DialogModule
+    DialogModule,
+    DatePipe
   ]
 })
 export class ProyectosListado implements OnInit {
@@ -35,18 +39,33 @@ export class ProyectosListado implements OnInit {
   private readonly clientesApiClient: ClientesApiClient = inject(ClientesApiClient);
   private readonly messageService: MessageService = inject(MessageService);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly http: HttpClient = inject(HttpClient);
 
   // Listas de datos
   proyectos: Project[] = [];
   clientes: Client[] = [];
   clientesDisponibles: Client[] = []; // Solo activos para selección
 
-  // Controladores de diálogo de Proyecto
+  // Paginación y búsqueda
+  page: number = 1;
+  limit: number = 10;
+  search: string = "";
+  status: string | null = null;
+  totalRecords: number = 0;
+  totalPages: number = 0;
+
+  estadosFiltro = [
+    { label: "Todos", value: null },
+    { label: "Activo", value: "Activo" },
+    { label: "Finalizado", value: "Finalizado" },
+    { label: "Baja", value: "Baja" }
+  ];
+
+  // Controladores de Proyecto
   dialogoProyectoVisible: boolean = false;
-  proyectoEnEdicion: { id?: number; name: string; clientId?: number; status?: 'Activo' | 'Finalizado' | 'Baja' } = { name: "" };
+  proyectoEnEdicion: { id?: number; name: string; clientId?: number; status?: 'Activo' | 'Finalizado' | 'Baja'; deadline?: string } = { name: "" };
   clienteSeleccionado: Client | null = null;
   esEdicion: boolean = false;
-
 
   ngOnInit() {
     this.cargarProyectos();
@@ -54,10 +73,17 @@ export class ProyectosListado implements OnInit {
   }
 
   cargarProyectos() {
-    this.proyectosApiClient.findAll().subscribe({
-      next: (data) => {
+    this.proyectosApiClient.findAll({
+      page: this.page,
+      limit: this.limit,
+      search: this.search,
+      status: this.status || undefined
+    }).subscribe({
+      next: (res) => {
         setTimeout(() => {
-          this.proyectos = data;
+          this.proyectos = res.data;
+          this.totalRecords = res.total;
+          this.totalPages = res.totalPages;
           this.cdr.detectChanges();
         });
       },
@@ -68,11 +94,11 @@ export class ProyectosListado implements OnInit {
   }
 
   cargarClientes() {
-    this.clientesApiClient.findAll().subscribe({
-      next: (data) => {
+    // Para el combo de selección cargamos sin paginar (o un límite alto) para no tener problemas (lo que hablamos en el grupo de wapp)
+    this.clientesApiClient.findAll({ page: 1, limit: 100 }).subscribe({
+      next: (res) => {
         setTimeout(() => {
-          this.clientes = data;
-          // Solo clientes activos para asociar a proyectos
+          this.clientes = res.data;
           this.clientesDisponibles = this.clientes.filter(c => c.status === 'Activo');
           this.cdr.detectChanges();
         });
@@ -83,7 +109,32 @@ export class ProyectosListado implements OnInit {
     });
   }
 
+  onSearch() {
+    this.page = 1;
+    this.cargarProyectos();
+  }
 
+  onPageChange(newPage: number) {
+    this.page = newPage;
+    this.cargarProyectos();
+  }
+
+  exportarCSV() {
+    this.http.get(`${API_URL}/projects/export/csv`, { responseType: 'text' }).subscribe({
+      next: (csvContent) => {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'proyectos.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.messageService.add({ severity: "error", summary: "Error", detail: "No se pudo exportar a CSV." });
+      }
+    });
+  }
 
   obtenerSeveridadEstado(status: string): 'success' | 'info' | 'danger' | 'secondary' {
     switch (status) {
@@ -100,18 +151,19 @@ export class ProyectosListado implements OnInit {
 
   abrirDialogoCrear() {
     this.esEdicion = false;
-    this.proyectoEnEdicion = { name: "", status: "Activo" };
+    this.proyectoEnEdicion = { name: "", status: "Activo", deadline: "" };
     this.clienteSeleccionado = null;
     this.dialogoProyectoVisible = true;
   }
 
   abrirDialogoEditar(proyecto: Project) {
     this.esEdicion = true;
-    this.proyectoEnEdicion = { 
+    this.proyectoEnEdicion = {
       id: proyecto.id,
       name: proyecto.name,
       clientId: proyecto.client?.id,
-      status: proyecto.status
+      status: proyecto.status,
+      deadline: proyecto.deadline ? proyecto.deadline.split('T')[0] : ''
     };
     this.clienteSeleccionado = proyecto.client || null;
     this.dialogoProyectoVisible = true;
@@ -120,11 +172,11 @@ export class ProyectosListado implements OnInit {
   guardarProyecto() {
     if (!this.proyectoEnEdicion.name) return;
 
-    // Asignar id de cliente seleccionado
     const payload = {
       name: this.proyectoEnEdicion.name,
       clientId: this.clienteSeleccionado ? this.clienteSeleccionado.id : undefined,
-      status: this.proyectoEnEdicion.status
+      status: this.proyectoEnEdicion.status,
+      deadline: this.proyectoEnEdicion.deadline || undefined
     };
 
     if (this.esEdicion && this.proyectoEnEdicion.id) {
@@ -167,7 +219,6 @@ export class ProyectosListado implements OnInit {
       }
     });
   }
-
 
   verTareas(id: number) {
     this.router.navigate(['/proyectos', id, 'tareas']);

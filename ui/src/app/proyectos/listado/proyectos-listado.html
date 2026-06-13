@@ -12,15 +12,29 @@
       </div>
     </div>
 
+    <!-- Barra de acciones y filtros -->
+    <div class="filters-container">
+      <div class="search-box">
+        <i class="pi pi-search search-icon"></i>
+        <input pInputText placeholder="Buscar proyecto por nombre..." [(ngModel)]="search" (input)="onSearch()" class="search-input" />
+      </div>
+      
+      <p-select [options]="estadosFiltro" [(ngModel)]="status" optionLabel="label" optionValue="value" placeholder="Filtrar por estado" (onChange)="onSearch()" [showClear]="true" class="status-select"></p-select>
+      
+      <p-button label="Exportar CSV" icon="pi pi-download" severity="help" (click)="exportarCSV()" class="btn-csv ml-auto"></p-button>
+    </div>
+
     <!-- Tabla de Proyectos -->
     <div class="table-wrapper">
       <p-table [value]="proyectos" responsiveLayout="scroll" styleClass="p-datatable-custom">
         <ng-template #header>
           <tr>
-            <th style="width: 35%">Proyecto</th>
-            <th style="width: 25%">Cliente</th>
-            <th style="width: 20%">Estado</th>
-            <th style="width: 20%; text-align: center">Acciones</th>
+            <th style="width: 25%">Proyecto</th>
+            <th style="width: 20%">Cliente</th>
+            <th style="width: 15%">Fecha Límite</th>
+            <th style="width: 15%">Plazo</th>
+            <th style="width: 13%">Estado</th>
+            <th style="width: 12%; text-align: center">Acciones</th>
           </tr>
         </ng-template>
         <ng-template #body let-proyecto>
@@ -43,6 +57,22 @@
               }
             </td>
             <td>
+              <span>{{ proyecto.deadline ? (proyecto.deadline | date:'dd/MM/yyyy') : '-' }}</span>
+            </td>
+            <td>
+              @if (proyecto.remainingDays !== null && proyecto.remainingDays !== undefined) {
+                @if (proyecto.remainingDays > 0) {
+                  <span class="deadline-badge safe">Quedan {{ proyecto.remainingDays }} días</span>
+                } @else if (proyecto.remainingDays === 0) {
+                  <span class="deadline-badge warning">Vence hoy</span>
+                } @else {
+                  <span class="deadline-badge danger">Retrasado {{ -proyecto.remainingDays }} días</span>
+                }
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
               <p-tag [value]="proyecto.status" [severity]="obtenerSeveridadEstado(proyecto.status)"
                 [rounded]="true"></p-tag>
             </td>
@@ -60,7 +90,7 @@
         </ng-template>
         <ng-template #emptymessage>
           <tr>
-            <td colspan="4" class="empty-message-cell">
+            <td colspan="6" class="empty-message-cell">
               <div class="empty-message-container">
                 <i class="pi pi-info-circle empty-icon"></i>
                 <p>No se encontraron proyectos registrados.</p>
@@ -69,6 +99,13 @@
           </tr>
         </ng-template>
       </p-table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination-bar glass-panel mt-3">
+      <p-button icon="pi pi-chevron-left" [disabled]="page === 1" (click)="onPageChange(page - 1)" [text]="true" severity="secondary"></p-button>
+      <span class="pagination-info">Página {{ page }} de {{ totalPages }} (Total: {{ totalRecords }})</span>
+      <p-button icon="pi pi-chevron-right" [disabled]="page === totalPages" (click)="onPageChange(page + 1)" [text]="true" severity="secondary"></p-button>
     </div>
   </div>
 
@@ -87,6 +124,11 @@
         <p-select id="cliente" [options]="clientesDisponibles" [(ngModel)]="clienteSeleccionado" optionLabel="name"
           placeholder="Seleccione un cliente" [showClear]="true" class="w-full"></p-select>
         <small class="field-help">Dejar vacío si es un proyecto interno.</small>
+      </div>
+
+      <div class="field">
+        <label for="deadline">Fecha Límite</label>
+        <input id="deadline" type="date" pInputText [(ngModel)]="proyectoEnEdicion.deadline" class="w-full" />
       </div>
 
       @if (esEdicion) {
