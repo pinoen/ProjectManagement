@@ -3,14 +3,14 @@ import { ClientStatus } from "../entities/client.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateClientDto {
-  @ApiProperty({ example: 'Zorzal Sistemas' })
+  @ApiProperty({ example: 'Zorzal Sistemas', description: 'Nombre del cliente' })
   @IsString()
   name!: string
 
   @ApiProperty({
     enum: ClientStatus,
     default: ClientStatus.ACTIVE,
-    description: 'Client initial state',
+    description: 'Estado inicial del cliente',
     required: false
   })
   @IsOptional()

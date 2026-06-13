@@ -3,13 +3,13 @@ import { ProjectStatus } from "../entities/project.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateProjectDto {
-  @ApiProperty({ example: 'NestJS migration', description: 'Proyect name' })
+  @ApiProperty({ example: 'Migración a NestJS', description: 'Nombre del proyecto' })
   @IsString()
   name!: string;
 
   @ApiProperty({
     example: 1,
-    description: 'Assigned client id (optional)',
+    description: 'ID del cliente asignado (opcional)',
     required: false
   })
   @IsNumber()
@@ -19,14 +19,14 @@ export class CreateProjectDto {
   @ApiProperty({
     enum: ProjectStatus,
     default: ProjectStatus.ACTIVE,
-    description: 'Project initial state',
+    description: 'Estado inicial del proyecto',
     required: false
   })
   @IsOptional()
   @IsEnum(ProjectStatus)
   status?: ProjectStatus;
 
-  @ApiProperty({ example: '2026-12-31', description: 'Project deadline (ISO date)', required: false })
+  @ApiProperty({ example: '2026-12-31', description: 'Fecha límite del proyecto (ISO date)', required: false })
   @IsOptional()
   @IsDateString()
   deadline?: string;

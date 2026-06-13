@@ -11,8 +11,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 
   const config = new DocumentBuilder()
-    .setTitle('Project Management API')
-    .setDescription('API documentation for Project Management')
+    .setTitle('API de Gestión de Proyectos')
+    .setDescription('Documentación de la API de Gestión de Proyectos')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -20,7 +20,7 @@ async function bootstrap() {
         scheme: 'bearer',
         bearerFormat: 'JWT',
         name: 'JWT',
-        description: 'Enter your JWT token',
+        description: 'Ingrese su token JWT',
         in: 'header',
       },
       'JWT-auth',

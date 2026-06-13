@@ -19,12 +19,12 @@ export class QueryProjectDto extends PaginationQueryDto {
   @Min(1)
   clientId?: number;
 
-  @ApiPropertyOptional({ example: '2026-12-31', description: 'Filter: deadline before this date' })
+  @ApiPropertyOptional({ example: '2026-12-31', description: 'Filtrar: fecha límite anterior a esta fecha' })
   @IsOptional()
   @IsDateString()
   dueBefore?: string;
 
-  @ApiPropertyOptional({ example: '2026-01-01', description: 'Filter: deadline after this date' })
+  @ApiPropertyOptional({ example: '2026-01-01', description: 'Filtrar: fecha límite posterior a esta fecha' })
   @IsOptional()
   @IsDateString()
   dueAfter?: string;

@@ -25,7 +25,7 @@ export class ProjectsService {
       const client = await this.clientsService.findOne(clientId)
 
       if (client.status !== ClientStatus.ACTIVE) {
-        throw new BadRequestException(`Cannot assign client ${clientId} because they are inactive (Baja).`)
+        throw new BadRequestException(`No se puede asignar el cliente ${clientId} porque se encuentra inactivo (Baja).`)
       }
       project.client = client
     }
@@ -82,7 +82,7 @@ export class ProjectsService {
     const project = await this.projectRepository.findOne({ where: { id }, relations: ['client', 'tasks'] })
 
     if (!project) {
-      throw new NotFoundException(`Project with id ${id} was not found.`)
+      throw new NotFoundException(`Proyecto con id ${id} no encontrado.`)
     }
     return project
   }
@@ -97,7 +97,7 @@ export class ProjectsService {
       const client = await this.clientsService.findOne(clientId);
 
       if (client.status !== ClientStatus.ACTIVE) {
-        throw new BadRequestException(`Cannot assign client ${clientId} because they are inactive (Baja).`);
+        throw new BadRequestException(`No se puede asignar el cliente ${clientId} porque se encuentra inactivo (Baja).`);
       }
 
       project.client = client;

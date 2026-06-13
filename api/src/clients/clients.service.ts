@@ -55,7 +55,7 @@ export class ClientsService {
     const client = await this.clientRepository.findOne({ where: { id }, relations: ['projects'] })
 
     if (!client) {
-      throw new NotFoundException(`Client with the id ${id} was not found.`)
+      throw new NotFoundException(`Cliente con id ${id} no encontrado.`)
     }
 
     return client;
@@ -73,7 +73,7 @@ export class ClientsService {
     const client = await this.findOne(id)
 
     if (client.projects && client.projects.length > 0) {
-      throw new BadRequestException(`Client with id ${id} cannot be removed because it is registered in one or more projects.`)
+      throw new BadRequestException(`El cliente con id ${id} no puede eliminarse porque está registrado en uno o más proyectos.`)
     }
 
     client.status = ClientStatus.INACTIVE

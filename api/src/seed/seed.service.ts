@@ -29,7 +29,7 @@ export class SeedService {
     const existingUsers = await this.usersService.findAll();
 
     if (existingUsers.length > 0) {
-      return { message: 'Database is already seeded. No action taken! 🛑' };
+      return { message: 'La base de datos ya fue inicializada. No se realizó ninguna acción. 🛑' };
     }
 
     // 1. Seed Users
@@ -77,6 +77,6 @@ export class SeedService {
       });
     }
 
-    return { message: 'Database seeded successfully! 🌱' };
+    return { message: 'Base de datos inicializada correctamente. 🌱' };
   }
 }

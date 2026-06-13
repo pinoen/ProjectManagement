@@ -70,7 +70,7 @@ export class TasksService {
     const task = await this.taskRepository.findOne({ where: { id }, relations: ['project'] })
 
     if (!task) {
-      throw new NotFoundException(`Task with id ${id} was not found.`)
+      throw new NotFoundException(`Tarea con id ${id} no encontrada.`)
     }
     return task;
   }
