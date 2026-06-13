@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   Query,
-  Header,
+  StreamableFile,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -31,10 +31,11 @@ export class ClientsController {
   }
 
   @Get('export/csv')
-  @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="clients.csv"')
-  exportCsv() {
-    return this.clientsService.exportCsv();
+  async exportCsv(): Promise<StreamableFile> {
+    return new StreamableFile(await this.clientsService.exportCsv(), {
+      type: 'text/csv; charset=utf-8',
+      disposition: 'attachment; filename="clients.csv"',
+    });
   }
 
   @Get(':id')

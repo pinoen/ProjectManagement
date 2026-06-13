@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Header } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, StreamableFile } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -21,10 +21,11 @@ export class TasksController {
   }
 
   @Get('export/csv')
-  @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="tasks.csv"')
-  exportCsv() {
-    return this.tasksService.exportCsv();
+  async exportCsv(): Promise<StreamableFile> {
+    return new StreamableFile(await this.tasksService.exportCsv(), {
+      type: 'text/csv; charset=utf-8',
+      disposition: 'attachment; filename="tasks.csv"',
+    });
   }
 
   @Get(':id')
