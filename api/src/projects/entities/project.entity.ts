@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, AfterLoad } from "typeorm";
 import { Client } from "../../clients/entities/client.entity";
 import { Task } from "../../tasks/entities/task.entity";
 
@@ -25,4 +25,20 @@ export class Project {
 
   @OneToMany(() => Task, (task) => task.project)
   tasks!: Task[]
+
+  @Column({ type: 'date', nullable: true })
+  deadline?: Date
+
+  remainingDays?: number | null
+
+  @AfterLoad()
+  computeRemainingDays() {
+    if (this.deadline) {
+      const now = new Date();
+      const diff = new Date(this.deadline).getTime() - now.getTime();
+      this.remainingDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    } else {
+      this.remainingDays = null;
+    }
+  }
 }

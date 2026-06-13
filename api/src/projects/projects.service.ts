@@ -4,7 +4,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { ClientStatus } from '../clients/entities/client.entity';
 import { ClientsService } from '../clients/clients.service';
 import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
@@ -35,7 +35,7 @@ export class ProjectsService {
   }
 
   async findAll(query: QueryProjectDto): Promise<PaginatedResultDto<Project>> {
-    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, clientId } = query;
+    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, clientId, dueBefore, dueAfter } = query;
 
     const where: any = {};
 
@@ -49,6 +49,14 @@ export class ProjectsService {
 
     if (search) {
       where.name = ILike(`%${search}%`);
+    }
+
+    if (dueBefore && dueAfter) {
+      where.deadline = Between(new Date(dueAfter), new Date(dueBefore));
+    } else if (dueBefore) {
+      where.deadline = LessThanOrEqual(new Date(dueBefore));
+    } else if (dueAfter) {
+      where.deadline = MoreThanOrEqual(new Date(dueAfter));
     }
 
     const [data, total] = await this.projectRepository.findAndCount({
@@ -65,8 +73,8 @@ export class ProjectsService {
   async exportCsv(): Promise<string> {
     const projects = await this.projectRepository.find({ order: { id: 'ASC' }, relations: ['client'] });
 
-    const header = toCsvRow(['ID', 'Nombre', 'Estado', 'Cliente']);
-    const rows = projects.map(p => toCsvRow([p.id, p.name, p.status, p.client?.name ?? '']));
+    const header = toCsvRow(['ID', 'Nombre', 'Estado', 'Cliente', 'FechaLimite', 'DiasRestantes']);
+    const rows = projects.map(p => toCsvRow([p.id, p.name, p.status, p.client?.name ?? '', p.deadline ?? '', p.remainingDays ?? '']));
     return '\uFEFF' + header + rows.join('');
   }
 

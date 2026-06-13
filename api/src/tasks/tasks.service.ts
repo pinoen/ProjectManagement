@@ -4,7 +4,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { QueryTaskDto } from './dto/query-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskStatus } from './entities/task.entity';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Project } from '../projects/entities/project.entity';
 import { PaginatedResultDto } from '../common/dto/paginated-result.dto';
 import { toCsvRow } from '../common/utils/csv';
@@ -23,7 +23,7 @@ export class TasksService {
   }
 
   async findAll(query: QueryTaskDto): Promise<PaginatedResultDto<Task>> {
-    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, projectId } = query;
+    const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', search, status, projectId, dueBefore, dueAfter } = query;
 
     const where: any = {};
 
@@ -37,6 +37,14 @@ export class TasksService {
 
     if (search) {
       where.description = ILike(`%${search}%`);
+    }
+
+    if (dueBefore && dueAfter) {
+      where.deadline = Between(new Date(dueAfter), new Date(dueBefore));
+    } else if (dueBefore) {
+      where.deadline = LessThanOrEqual(new Date(dueBefore));
+    } else if (dueAfter) {
+      where.deadline = MoreThanOrEqual(new Date(dueAfter));
     }
 
     const [data, total] = await this.taskRepository.findAndCount({
@@ -53,8 +61,8 @@ export class TasksService {
   async exportCsv(): Promise<string> {
     const tasks = await this.taskRepository.find({ order: { id: 'ASC' }, relations: ['project'] });
 
-    const header = toCsvRow(['ID', 'Descripcion', 'Estado', 'Proyecto']);
-    const rows = tasks.map(t => toCsvRow([t.id, t.description, t.status, t.project?.name ?? '']));
+    const header = toCsvRow(['ID', 'Descripcion', 'Estado', 'Proyecto', 'FechaLimite', 'DiasRestantes']);
+    const rows = tasks.map(t => toCsvRow([t.id, t.description, t.status, t.project?.name ?? '', t.deadline ?? '', t.remainingDays ?? '']));
     return '\uFEFF' + header + rows.join('');
   }
 
