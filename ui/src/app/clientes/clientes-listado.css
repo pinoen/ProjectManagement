@@ -32,8 +32,8 @@
     color: #94a3b8;
 }
 
-/* BOTONES CREAR PROYECTO */
-::ng-deep .btn-create-project .p-button {
+/* BOTON CREAR CLIENTE - ESTILO */
+::ng-deep .btn-create-client .p-button {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
     border: none !important;
     border-radius: 10px !important;
@@ -44,14 +44,14 @@
     transition: all 0.2s ease !important;
 }
 
-::ng-deep .btn-create-project .p-button:hover {
+::ng-deep .btn-create-client .p-button:hover {
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35) !important;
 }
 
-/* Filtros y BUSQUEDA
+/* FILTROS DE BUSQUEDA - ESTILO 
 
-no vamos a hacer en front? wapp
+Al final lo vamos a hacer en backend
 
 */
 .filters-container {
@@ -93,7 +93,6 @@ no vamos a hacer en front? wapp
 .search-input:focus {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
-    background: rgba(15, 23, 42, 0.8) !important;
 }
 
 ::ng-deep .status-select.p-select {
@@ -112,7 +111,7 @@ no vamos a hacer en front? wapp
     font-size: 0.9rem !important;
 }
 
-/* Estilo tablas primeng */
+/* ESTILO DE TABLA PRIMENG */
 .table-wrapper {
     background: rgba(15, 23, 42, 0.25);
     border-radius: 12px;
@@ -152,52 +151,26 @@ no vamos a hacer en front? wapp
     vertical-align: middle !important;
 }
 
-.project-row {
+.client-row {
     cursor: default;
 }
 
-.project-name-cell {
+.client-name-cell {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     font-weight: 600;
 }
 
-.folder-icon {
+.user-avatar-icon {
     color: #6366f1;
-    font-size: 1.1rem;
-}
-
-/* Badge */
-.client-badge,
-.internal-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.client-badge {
     background: rgba(99, 102, 241, 0.1);
-    color: #a5b4fc;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 0.45rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
 
-.internal-badge {
-    background: rgba(245, 158, 11, 0.1);
-    color: #fde047;
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.client-icon,
-.internal-icon {
-    font-size: 0.8rem;
-}
-
-/* ACCIONES ESTILOS */
+/* ESTILO DE ACCIONES */
 .actions-cell {
     text-align: center;
 }
@@ -235,7 +208,7 @@ no vamos a hacer en front? wapp
     font-size: 2rem;
 }
 
-/* Estilo Dialogo */
+/* ESTILO DE DIALOGO */
 ::ng-deep .custom-dialog .p-dialog {
     background: #0f172a !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -296,13 +269,7 @@ no vamos a hacer en front? wapp
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
 }
 
-.field-help {
-    font-size: 0.75rem;
-    color: #64748b;
-    margin-top: 0.15rem;
-}
-
-/* ANIMACIONES */
+/* Animaciones */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -317,44 +284,4 @@ no vamos a hacer en front? wapp
 
 .animate-fade-in {
     animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* Estilos UI clientes */
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-}
-
-::ng-deep .btn-clients .p-button {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: #94a3b8 !important;
-    border-radius: 10px !important;
-    padding: 0.65rem 1.25rem !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    transition: all 0.2s ease !important;
-}
-
-::ng-deep .btn-clients .p-button:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-.clients-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 0.75rem;
-}
-
-.clients-header-row h4 {
-    margin: 0;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #f8fafc;
-    font-family: 'Outfit', sans-serif;
 }

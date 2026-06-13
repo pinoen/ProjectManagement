@@ -1,1 +1,433 @@
-/* Tareas listado styles */
+.navigation-bar {
+    margin-bottom: 1rem;
+}
+
+::ng-deep .back-btn .p-button {
+    color: #94a3b8 !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.2s ease !important;
+}
+
+::ng-deep .back-btn .p-button:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* PANEL DE INFORMACION - PROYECTO */
+.project-info-panel {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.project-details {
+    flex-grow: 1;
+}
+
+.project-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.project-header-icon {
+    font-size: 2.25rem;
+    color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.project-title-row h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+    color: #f8fafc;
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* BARRA %  PROGRESO */
+.progress-section {
+    min-width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.progress-label {
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.progress-stats {
+    color: #f8fafc;
+    font-weight: 500;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1 0%, #10b981 100%);
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-percentage {
+    align-self: flex-end;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* CONTENEDOR PRINCIPAL ( TABLA DE TAREAS) */
+.main-container {
+    padding: 2rem;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1.25rem;
+}
+
+.header-section h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #f8fafc;
+}
+
+::ng-deep .btn-create-task .p-button {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25) !important;
+    transition: all 0.2s ease !important;
+}
+
+::ng-deep .btn-create-task .p-button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35) !important;
+}
+
+/* Filtros */
+.filters-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-box {
+    position: relative;
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100% !important;
+    padding-left: 2.5rem !important;
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f8fafc !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+    height: 42px !important;
+    transition: all 0.2s ease !important;
+}
+
+.search-input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+::ng-deep .status-select.p-select {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    height: 42px !important;
+    min-width: 180px !important;
+    color: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+::ng-deep .status-select.p-select .p-select-label {
+    color: #f8fafc !important;
+    font-size: 0.9rem !important;
+}
+
+.toggle-baja-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.toggle-label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    cursor: pointer;
+    user-select: none;
+}
+
+/*  */
+.client-badge,
+.internal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.client-badge {
+    background: rgba(99, 102, 241, 0.1);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.internal-badge {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fde047;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.client-icon,
+.internal-icon {
+    font-size: 0.75rem;
+}
+
+/* ESTILOS TABLA PRIMENG */
+.table-wrapper {
+    background: rgba(15, 23, 42, 0.25);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+::ng-deep .p-datatable-custom {
+    border: none !important;
+    background: transparent !important;
+}
+
+::ng-deep .p-datatable-custom .p-datatable-thead>tr>th {
+    background: rgba(15, 23, 42, 0.5) !important;
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+::ng-deep .p-datatable-custom .p-datatable-tbody>tr {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+    transition: background 0.15s ease !important;
+}
+
+::ng-deep .p-datatable-custom .p-datatable-tbody>tr:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+::ng-deep .p-datatable-custom .p-datatable-tbody>tr>td {
+    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+    vertical-align: middle !important;
+}
+
+.task-row-baja {
+    background: rgba(239, 68, 68, 0.02) !important;
+}
+
+.checkbox-cell {
+    text-align: center;
+}
+
+.task-desc-cell {
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* Estilos de estados de tareas */
+.completed-task-text {
+    text-decoration: line-through;
+    color: #64748b;
+}
+
+.baja-task-text {
+    text-decoration: line-through;
+    color: rgba(239, 68, 68, 0.4);
+    font-style: italic;
+}
+
+.actions-cell {
+    text-align: center;
+}
+
+.actions-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+::ng-deep .actions-group .p-button.p-button-icon-only {
+    width: 32px !important;
+    height: 32px !important;
+    transition: all 0.2s ease !important;
+}
+
+::ng-deep .actions-group .p-button:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: scale(1.05);
+}
+
+.no-actions-text {
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.empty-message-cell {
+    padding: 3rem 0 !important;
+}
+
+.empty-message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #64748b;
+    gap: 0.5rem;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    color: #10b981;
+}
+
+/* ESTILOS DIALOGO */
+::ng-deep .custom-dialog .p-dialog {
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    width: 450px !important;
+    max-width: 90vw !important;
+}
+
+::ng-deep .custom-dialog .p-dialog-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 1.25rem 1.5rem !important;
+    color: #f8fafc !important;
+}
+
+::ng-deep .custom-dialog .p-dialog-content {
+    background: transparent !important;
+    padding: 1.5rem !important;
+}
+
+::ng-deep .custom-dialog .p-dialog-footer {
+    background: rgba(15, 23, 42, 0.5) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 1rem 1.5rem !important;
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.field input[pInputText] {
+    width: 100% !important;
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #f8fafc !important;
+    border-radius: 8px !important;
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.9rem !important;
+}
+
+.field input[pInputText]:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* aNIMACIONES */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}

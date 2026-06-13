@@ -38,7 +38,7 @@ export class Login {
         this.loginApiClient.iniciarSesion(username, password).subscribe({
             next: (data) => {
                 this.authStore.guardarToken(data.access_token);
-                this.router.navigateByUrl("/proyectos");
+                this.router.navigateByUrl("/inicio");
             },
             error: (err) => {
                 let errorMsg = "Usuario o contraseña incorrectos";

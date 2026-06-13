@@ -1,4 +1,112 @@
-<!-- grupo wapp: como hacerlo -->
 <app-template>
-  <h2>Listado de Proyectos (Próximamente)</h2>
+  <div class="glass-panel main-container animate-fade-in">
+    <!-- Header de la sección -->
+    <div class="header-section">
+      <div class="title-container">
+        <h2>Gestión de Proyectos</h2>
+        <p class="subtitle">Monitorea, organiza y actualiza los proyectos de la organización.</p>
+      </div>
+      <div class="header-actions">
+        <p-button label="Nuevo Proyecto" icon="pi pi-plus" (click)="abrirDialogoCrear()"
+          class="btn-create-project"></p-button>
+      </div>
+    </div>
+
+    <!-- Tabla de Proyectos -->
+    <div class="table-wrapper">
+      <p-table [value]="proyectos" responsiveLayout="scroll" styleClass="p-datatable-custom">
+        <ng-template #header>
+          <tr>
+            <th style="width: 35%">Proyecto</th>
+            <th style="width: 25%">Cliente</th>
+            <th style="width: 20%">Estado</th>
+            <th style="width: 20%; text-align: center">Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-proyecto>
+          <tr class="project-row">
+            <td class="project-name-cell">
+              <i class="pi pi-folder-open folder-icon"></i>
+              <span>{{ proyecto.name }}</span>
+            </td>
+            <td>
+              @if (proyecto.client) {
+              <span class="client-badge">
+                <i class="pi pi-user client-icon"></i>
+                {{ proyecto.client.name }}
+              </span>
+              } @else {
+              <span class="internal-badge">
+                <i class="pi pi-building internal-icon"></i>
+                Interno
+              </span>
+              }
+            </td>
+            <td>
+              <p-tag [value]="proyecto.status" [severity]="obtenerSeveridadEstado(proyecto.status)"
+                [rounded]="true"></p-tag>
+            </td>
+            <td class="actions-cell">
+              <div class="actions-group">
+                <p-button icon="pi pi-list" [rounded]="true" severity="info" [text]="true" pTooltip="Ver Tareas"
+                  tooltipPosition="top" (click)="verTareas(proyecto.id)"></p-button>
+                <p-button icon="pi pi-pencil" [rounded]="true" severity="warn" [text]="true" pTooltip="Editar Proyecto"
+                  tooltipPosition="top" (click)="abrirDialogoEditar(proyecto)"></p-button>
+                <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" pTooltip="Eliminar"
+                  tooltipPosition="top" (click)="eliminarProyecto(proyecto.id)"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="4" class="empty-message-cell">
+              <div class="empty-message-container">
+                <i class="pi pi-info-circle empty-icon"></i>
+                <p>No se encontraron proyectos registrados.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Crear / Editar Proyecto -->
+  <p-dialog [header]="esEdicion ? 'Editar Proyecto' : 'Nuevo Proyecto'" [(visible)]="dialogoProyectoVisible"
+    [modal]="true" [resizable]="false" [draggable]="false" class="custom-dialog">
+    <div class="dialog-content">
+      <div class="field">
+        <label for="name">Nombre del Proyecto</label>
+        <input id="name" type="text" pInputText [(ngModel)]="proyectoEnEdicion.name"
+          placeholder="Ej. Portal de Clientes" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="cliente">Cliente (Opcional)</label>
+        <p-select id="cliente" [options]="clientesDisponibles" [(ngModel)]="clienteSeleccionado" optionLabel="name"
+          placeholder="Seleccione un cliente" [showClear]="true" class="w-full"></p-select>
+        <small class="field-help">Dejar vacío si es un proyecto interno.</small>
+      </div>
+
+      @if (esEdicion) {
+      <div class="field">
+        <label for="estado">Estado del Proyecto</label>
+        <p-select id="estado" [options]="[
+            { label: 'Activo', value: 'Activo' },
+            { label: 'Finalizado', value: 'Finalizado' },
+            { label: 'Baja', value: 'Baja' }
+          ]" [(ngModel)]="proyectoEnEdicion.status" optionLabel="label" optionValue="value"
+          placeholder="Seleccione un estado" class="w-full"></p-select>
+      </div>
+      }
+    </div>
+
+    <ng-template #footer>
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary"
+        (click)="dialogoProyectoVisible = false"></p-button>
+      <p-button [label]="esEdicion ? 'Guardar' : 'Crear'" icon="pi pi-check" (click)="guardarProyecto()"
+        [disabled]="!proyectoEnEdicion.name"></p-button>
+    </ng-template>
+  </p-dialog>
 </app-template>

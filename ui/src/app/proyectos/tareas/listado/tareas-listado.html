@@ -1,4 +1,124 @@
-<!-- grupo wapp: como hacerlo -->
 <app-template>
-  <h2>Listado de Tareas (Próximamente)</h2>
+  <!-- Botón Volver -->
+  <div class="navigation-bar animate-fade-in">
+    <p-button label="Volver a Proyectos" icon="pi pi-arrow-left" [text]="true" (click)="volverAProyectos()" class="back-btn"></p-button>
+  </div>
+
+  @if (proyecto) {
+    <!-- Panel del Proyecto y Progreso -->
+    <div class="glass-panel project-info-panel animate-fade-in">
+      <div class="project-details">
+        <div class="project-title-row">
+          <i class="pi pi-folder project-header-icon"></i>
+          <div>
+            <h2>{{ proyecto.name }}</h2>
+            <div class="project-meta">
+              @if (proyecto.client) {
+                <span class="client-badge">
+                  <i class="pi pi-user client-icon"></i>
+                  {{ proyecto.client.name }}
+                </span>
+              } @else {
+                <span class="internal-badge">
+                  <i class="pi pi-building internal-icon"></i>
+                  Interno
+                </span>
+              }
+              <p-tag [value]="proyecto.status" [severity]="proyecto.status === 'Activo' ? 'success' : proyecto.status === 'Finalizado' ? 'info' : 'danger'" [rounded]="true"></p-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Contenedor Principal de Tareas -->
+  <div class="glass-panel main-container animate-fade-in" style="margin-top: 1.5rem;">
+    <!-- Header de la sección de tareas -->
+    <div class="header-section">
+      <h3>Tareas del Proyecto</h3>
+      <p-button label="Nueva Tarea" icon="pi pi-plus" (click)="abrirDialogoCrear()" class="btn-create-task"></p-button>
+    </div>
+
+    <!-- Lista/Tabla de Tareas -->
+    <div class="table-wrapper">
+      <p-table [value]="tareas" responsiveLayout="scroll" styleClass="p-datatable-custom">
+        <ng-template #header>
+          <tr>
+            <th style="width: 8%; text-align: center">Ok</th>
+            <th style="width: 52%">Descripción</th>
+            <th style="width: 20%">Estado</th>
+            <th style="width: 20%; text-align: center">Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-tarea>
+          <tr class="task-row" [class.task-row-baja]="tarea.status === 'Baja'">
+            <td class="checkbox-cell">
+              @if (tarea.status !== 'Baja') {
+                <p-checkbox 
+                  [ngModel]="tarea.status === 'Finalizado'" 
+                  [binary]="true"
+                  (onChange)="toggleCompletada(tarea)">
+                </p-checkbox>
+              } @else {
+                <i class="pi pi-times-circle text-red-500"></i>
+              }
+            </td>
+            <td [class.completed-task-text]="tarea.status === 'Finalizado'" [class.baja-task-text]="tarea.status === 'Baja'" class="task-desc-cell">
+              {{ tarea.description }}
+            </td>
+            <td>
+              <p-tag [value]="tarea.status" [severity]="obtenerSeveridadEstado(tarea.status)" [rounded]="true"></p-tag>
+            </td>
+            <td class="actions-cell">
+              @if (tarea.status !== 'Baja') {
+                <div class="actions-group">
+                  <p-button icon="pi pi-pencil" [rounded]="true" severity="warn" [text]="true" pTooltip="Editar" tooltipPosition="top" (click)="abrirDialogoEditar(tarea)"></p-button>
+                  <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [text]="true" pTooltip="Eliminar" tooltipPosition="top" (click)="eliminarTarea(tarea.id)"></p-button>
+                </div>
+              } @else {
+                <span class="no-actions-text">Sin acciones</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="4" class="empty-message-cell">
+              <div class="empty-message-container">
+                <i class="pi pi-check-circle empty-icon"></i>
+                <p>No hay tareas pendientes en esta vista.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Diálogo para Crear / Editar Tarea -->
+  <p-dialog [header]="esEdicion ? 'Editar Tarea' : 'Nueva Tarea'" [(visible)]="dialogoTareaVisible" [modal]="true" [resizable]="false" [draggable]="false" class="custom-dialog">
+    <div class="dialog-content">
+      <div class="field">
+        <label for="desc">Descripción de la Tarea</label>
+        <input id="desc" type="text" pInputText [(ngModel)]="tareaEnEdicion.description" placeholder="Ej. Implementar validaciones" autocomplete="off" />
+      </div>
+
+      @if (esEdicion) {
+        <div class="field">
+          <label for="estado">Estado</label>
+          <p-select id="estado" [options]="[
+            { label: 'Pendiente', value: 'Pendiente' },
+            { label: 'Finalizado', value: 'Finalizado' },
+            { label: 'Baja', value: 'Baja' }
+          ]" [(ngModel)]="tareaEnEdicion.status" optionLabel="label" optionValue="value" placeholder="Seleccione un estado" class="w-full"></p-select>
+        </div>
+      }
+    </div>
+
+    <ng-template #footer>
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" (click)="dialogoTareaVisible = false"></p-button>
+      <p-button [label]="esEdicion ? 'Guardar' : 'Crear'" icon="pi pi-check" (click)="guardarTarea()" [disabled]="!tareaEnEdicion.description"></p-button>
+    </ng-template>
+  </p-dialog>
 </app-template>
