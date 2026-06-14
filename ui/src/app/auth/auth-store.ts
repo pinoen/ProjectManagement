@@ -20,5 +20,19 @@ export class AuthStore {
         sessionStorage.removeItem("accessToken");
         this.router.navigateByUrl("/login");
     }
+    /* Usuario logueado, para mostrar en /inicio y sidebar */
+    obtenerUsuario(): string | null {
+        const token = this.obtenerToken();
+        if (!token) return null;
+        try {
+            const payloadBase64Url = token.split(".")[1];
+            const payloadBase64 = payloadBase64Url.replace(/-/g, "+").replace(/_/g, "/");
+            const payloadJson = atob(payloadBase64);
+            const payload = JSON.parse(payloadJson);
+            return payload.username || null;
+        } catch (e) {
+            return null;
+        }
+    }
 
 }

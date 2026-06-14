@@ -13,6 +13,10 @@ export class Template {
 
     private readonly authStore: AuthStore = inject(AuthStore);
 
+    get username(): string {
+        return this.authStore.obtenerUsuario() ?? 'GrupoAT';
+    }
+
     cerrarSesion() {
         this.authStore.cerrarSesion();
     }

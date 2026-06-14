@@ -94,9 +94,8 @@ export class ClientesListado implements OnInit {
   }
 
   exportarCSV() {
-    this.http.get(`${API_URL}/clients/export/csv`, { responseType: 'text' }).subscribe({
-      next: (csvContent) => {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    this.http.get(`${API_URL}/clients/export/csv`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -170,7 +169,7 @@ export class ClientesListado implements OnInit {
         if (err.error && err.error.message) {
           errorMsg = err.error.message;
         }
-        this.messageService.add({ severity: "error", summary: "Restricción de Negocio", detail: errorMsg });
+        this.messageService.add({ severity: "error", summary: "No se pudo eliminar el cliente", detail: errorMsg });
       }
     });
   }
