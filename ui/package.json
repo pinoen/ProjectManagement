@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "compodoc": "npx compodoc -p tsconfig.doc.json -d documentation -s -w",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

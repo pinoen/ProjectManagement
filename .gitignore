@@ -24,3 +24,9 @@ classDiagram.md
 CODEOWNERS
 .editorconfig
 .prettierrc
+
+# Angular proxy config
+ui/src/proxy.conf.json
+
+# Compodoc documentation
+ui/documentation/

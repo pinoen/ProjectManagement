@@ -13,7 +13,7 @@ export function authInterceptor(
   if (!authToken) {
     return next(req);
   }
-
+  /* para no mandar solicitudes todo el tiempo a backend */
   const reqWithToken = req.clone({
     headers: req.headers.set('Authorization', `Bearer ${authToken}`)
   });

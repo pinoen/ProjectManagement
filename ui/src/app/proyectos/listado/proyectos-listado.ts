@@ -120,9 +120,8 @@ export class ProyectosListado implements OnInit {
   }
 
   exportarCSV() {
-    this.http.get(`${API_URL}/projects/export/csv`, { responseType: 'text' }).subscribe({
-      next: (csvContent) => {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    this.http.get(`${API_URL}/projects/export/csv`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

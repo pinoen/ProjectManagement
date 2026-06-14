@@ -5,6 +5,7 @@ import { Template } from "../template/template";
 import { ProyectosApiClient, Project } from "../proyectos/proyectos-api-client";
 import { ClientesApiClient } from "../proyectos/clientes-api-client";
 import { TareasApiClient, Task } from "../proyectos/tareas/tareas-api-client";
+import { AuthStore } from "../auth/auth-store";
 import { forkJoin } from "rxjs";
 
 @Component({
@@ -17,6 +18,7 @@ export class Inicio implements OnInit {
   private readonly proyectosApiClient = inject(ProyectosApiClient);
   private readonly clientesApiClient = inject(ClientesApiClient);
   private readonly tareasApiClient = inject(TareasApiClient);
+  private readonly authStore = inject(AuthStore);
   private readonly cdr = inject(ChangeDetectorRef);
 
   // ESTADISTICAS PRINCIPALES
@@ -26,8 +28,10 @@ export class Inicio implements OnInit {
   proyectosPorCliente: { clienteName: string; proyectosCount: number }[] = [];
   proyectosPorVencer: Project[] = [];
   tareasPorVencer: Task[] = [];
+  username: string = "";
 
   ngOnInit() {
+    this.username = this.authStore.obtenerUsuario() ?? "Usuario";
     this.cargarMetricas();
   }
 
